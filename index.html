@@ -7,7 +7,6 @@
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <style>
@@ -16,6 +15,8 @@
  --card:#fff;
  --text:#000;
  --header:#2c3e50;
+ --ativo:#2c3e50;
+ --inativo:#fff;
 }
 body.dark{
  --bg:#121212;
@@ -55,14 +56,9 @@ header{
  width:50px;
  text-align:center;
 }
-#usuarioNome{
- margin-left:10px;
- font-weight:bold;
- text-align:center;
-}
 #btnVoltar{display:none}
 
-/* MENU (à esquerda) */
+/* MENU */
 #menu{
  position:absolute;
  top:56px;
@@ -97,10 +93,10 @@ header{
  margin-bottom:12px;
  border-radius:6px;
  cursor:pointer;
- text-align:center;
  font-weight:bold;
 }
 .tema:hover{ background:#eaeaea; }
+.tema p{ margin:4px 0; font-weight:normal; }
 
 /* LEITURA */
 #leitura{
@@ -113,25 +109,18 @@ header{
 }
 .meta{
  text-align:center;
- font-size:14px;
+ font-size:16px;
  margin:4px 0;
+ font-style:italic;
 }
 #lConteudo{
+ font-size:21px;
  margin-top:20px;
- line-height:1.6;
+ line-height:1,6;
  text-align:left;
  white-space: pre-wrap;
  cursor:text;
 }
-
-/* LOGIN / CADASTRO */
-input,button{
- font-size:16px;
- margin-top:10px;
- box-sizing:border-box;
-}
-input{ padding:12px; width:100%; border-radius:4px; border:1px solid #ccc;}
-button{ padding:12px; width:100%; cursor:pointer; background:#2c3e50; color:#fff; border:none; border-radius:4px; }
 
 /* ABAS DE PESQUISA */
 #lista .abas{
@@ -146,10 +135,10 @@ button{ padding:12px; width:100%; cursor:pointer; background:#2c3e50; color:#fff
  cursor:pointer;
  border-radius:4px;
  border:1px solid #ccc;
- background:#fff;
+ background:var(--inativo);
 }
 #lista .abas button.ativo{
- background:#2c3e50;
+ background:var(--ativo);
  color:#fff;
 }
 
@@ -159,7 +148,7 @@ mark{
  font-weight:bold;
 }
 
-/* BARRA DE PESQUISA ESTILIZADA */
+/* BARRA DE PESQUISA */
 #barraPesquisa{
  display:flex;
  margin-bottom:15px;
@@ -182,6 +171,25 @@ mark{
  color:#fff;
  cursor:pointer;
 }
+
+/* MENU DE CORES */
+#corMenu{
+ position:absolute;
+ z-index:999;
+ display:flex;
+ gap:5px;
+ background:#fff;
+ padding:5px;
+ border:1px solid #ccc;
+ border-radius:5px;
+}
+#corMenu div{
+ width:20px;
+ height:20px;
+ cursor:pointer;
+ border:1px solid #999;
+ border-radius:3px;
+}
 </style>
 </head>
 
@@ -196,42 +204,7 @@ mark{
 <!-- MENU -->
 <div id="menu">
  <button onclick="alternarModo()">🌙 Modo escuro</button>
- <button id="loginCadastroBtn" onclick="mostrarLogin()">🔐 Login / Cadastro</button>
- <button onclick="abrirPlanificacao()">🗂 Planificação</button>
- <button onclick="usuarioNome">Nome</button>
-   <div id="usuarioNome"></div>
- <button id="logoutBtn" onclick="logout()">⛔ Terminar sessão</button>
-</div>
-
-<!-- LOGIN -->
-<div id="login" style="display:none;padding:70px 15px 15px 15px;">
- <h3>Login</h3>
- <input id="loginEmail" placeholder="Email">
- <input id="loginSenha" type="password" placeholder="Senha">
- <button onclick="login()">Entrar</button>
- <p style="text-align:center; margin-top:10px;">
-   <span class="link" onclick="mostrarCadastro()" style="color:blue; cursor:pointer;">Criar conta</span>
- </p>
- <button onclick="loginGoogle()">🔵 Entrar com Google</button>
-</div>
-
-<!-- CADASTRO -->
-<div id="cadastro" style="display:none;padding:70px 15px 15px 15px;">
- <h3>Cadastro</h3>
- <input id="cadEmail" placeholder="Email">
- <input id="cadSenha" type="password" placeholder="Senha">
- <button onclick="cadastrar()">Criar Conta</button>
- <p style="text-align:center; margin-top:10px;">
-   <span class="link" onclick="mostrarLogin()" style="color:blue; cursor:pointer;">Já tenho conta</span>
- </p>
-</div>
-
-<!-- PLANIFICAÇÃO -->
-<div id="planificacao" style="display:none;padding:70px 15px 15px 15px;">
- <h3>Planificação de Tema</h3>
- <input id="planTema" placeholder="Digite um tema para pesquisar">
- <button onclick="pesquisarPlanificacao()">Pesquisar</button>
- <div id="planResultados" style="margin-top:15px;"></div>
+ <button onclick="window.open('https://wa.me/message/OB5A46SRD5QNN1','_blank')">💬 Suporte / Atendimento</button>
 </div>
 
 <!-- LISTA -->
@@ -257,6 +230,14 @@ mark{
  <div id="lConteudo"></div>
 </div>
 
+<!-- MENU DE CORES -->
+<div id="corMenu" style="display:none">
+ <div style="background:yellow" onclick="adicionarDestaque('yellow')"></div>
+ <div style="background:cyan" onclick="adicionarDestaque('cyan')"></div>
+ <div style="background:pink" onclick="adicionarDestaque('pink')"></div>
+ <div style="background:lightgreen" onclick="adicionarDestaque('lightgreen')"></div>
+</div>
+
 <script>
 firebase.initializeApp({
  apiKey: "AIzaSyCgO6wlKptEKpv-65nwZItGTXjLs0pl-cc",
@@ -264,237 +245,175 @@ firebase.initializeApp({
  projectId: "a-palavra-falada-abad0"
 });
 
-const auth = firebase.auth();
 const db = firebase.firestore();
-const google = new firebase.auth.GoogleAuthProvider();
-
 const lista = document.getElementById("lista");
 const leitura = document.getElementById("leitura");
-const loginDiv = document.getElementById("login");
-const cadDiv = document.getElementById("cadastro");
-const planDiv = document.getElementById("planificacao");
 const btnVoltar = document.getElementById("btnVoltar");
 const menuBtn = document.getElementById("menuBtn");
 const menu = document.getElementById("menu");
 const tituloHeader = document.getElementById("tituloHeader");
-const usuarioNome = document.getElementById("usuarioNome");
-const loginCadastroBtn = document.getElementById("loginCadastroBtn");
-const logoutBtn = document.getElementById("logoutBtn");
 const resultados = document.getElementById("resultados");
-const planResultados = document.getElementById("planResultados");
 const lConteudo = document.getElementById("lConteudo");
+const lLocal = document.getElementById("lLocal");
+const lData = document.getElementById("lData");
+const lTraducao = document.getElementById("lTraducao");
+const corMenu = document.getElementById("corMenu");
 
 let temas = [];
 let abaAtiva = "titulo";
 let termoPesquisado = "";
 let temaAtualId = "";
-let usuarioLogado = null;
+let scrollId = null;
+let pesquisaHistorico = [];
 
 // ---------------- FUNÇÕES DE TELA ----------------
-function atualizarUsuarioHeader(){
- if(usuarioLogado){
-   usuarioNome.innerText = usuarioLogado.displayName || usuarioLogado.email;
-   loginCadastroBtn.style.display="none";
-   logoutBtn.style.display="block";
- } else {
-   usuarioNome.innerText = "";
-   loginCadastroBtn.style.display="block";
-   logoutBtn.style.display="none";
- }
-}
-
 function mostrarLista(){
  lista.style.display="block";
  leitura.style.display="none";
- loginDiv.style.display="none";
- cadDiv.style.display="none";
- planDiv.style.display="none";
  btnVoltar.style.display="none";
  menuBtn.style.display="block";
  menu.style.display="none";
  tituloHeader.innerText="A Palavra Falada";
- termoPesquisado = "";
- temaAtualId = "";
- atualizarUsuarioHeader();
+ scrollId = null;
+ if(abaAtiva === "titulo") renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
 }
 
-function mostrarLogin(){
- lista.style.display="none";
- leitura.style.display="none";
- loginDiv.style.display="block";
- cadDiv.style.display="none";
- planDiv.style.display="none";
- menu.style.display="none";
- btnVoltar.style.display="block";
- menuBtn.style.display="none";
- tituloHeader.innerText="Login";
-}
-
-function mostrarCadastro(){
- lista.style.display="none";
- leitura.style.display="none";
- loginDiv.style.display="none";
- cadDiv.style.display="block";
- planDiv.style.display="none";
- menu.style.display="none";
- btnVoltar.style.display="block";
- menuBtn.style.display="none";
- tituloHeader.innerText="Cadastro";
-}
-
-function abrirPlanificacao(){
- lista.style.display="none";
- leitura.style.display="none";
- loginDiv.style.display="none";
- cadDiv.style.display="none";
- planDiv.style.display="block";
- menu.style.display="none";
- btnVoltar.style.display="block";
- menuBtn.style.display="none";
- tituloHeader.innerText="Planificação";
-}
-
+// ---------------- MENU ----------------
 function abrirMenu(){
  lista.style.display="none";
  leitura.style.display="none";
- loginDiv.style.display="none";
- cadDiv.style.display="none";
- planDiv.style.display="none";
  menu.style.display="block";
  btnVoltar.style.display="block";
  menuBtn.style.display="none";
  tituloHeader.innerText="Menu";
 }
-
 function alternarModo(){ document.body.classList.toggle("dark"); }
 
-// ---------------- LOGIN ----------------
-function login(){
- const email = document.getElementById("loginEmail").value.trim();
- const senha = document.getElementById("loginSenha").value.trim();
- if(!email || !senha){ alert("Preencha email e senha"); return; }
- auth.signInWithEmailAndPassword(email,senha)
- .then((res)=>{
-   usuarioLogado = res.user;
-   mostrarLista();
- })
- .catch(err=>alert(err.message));
-}
-
-function cadastrar(){
- const email = document.getElementById("cadEmail").value.trim();
- const senha = document.getElementById("cadSenha").value.trim();
- if(!email || !senha){ alert("Preencha email e senha"); return; }
- auth.createUserWithEmailAndPassword(email,senha)
- .then((res)=>{
-   usuarioLogado = res.user;
-   mostrarLista();
- })
- .catch(err=>alert(err.message));
-}
-
-function loginGoogle(){
- auth.signInWithPopup(google)
- .then((res)=>{
-   usuarioLogado = res.user;
-   mostrarLista();
- })
- .catch(err=>alert(err.message));
-}
-
-function logout(){
- auth.signOut().then(()=>{
-   usuarioLogado = null;
-   mostrarLista();
-});
-}
-
-auth.onAuthStateChanged(user=>{
- usuarioLogado = user;
- atualizarUsuarioHeader();
-});
-
-// ---------------- PESQUISA ----------------
+// ---------------- ABAS ----------------
 function ativarAba(aba){
  abaAtiva = aba;
- document.getElementById("pesquisaInput").value = "";
  document.getElementById("abaTitulo").classList.toggle("ativo", aba==="titulo");
  document.getElementById("abaConteudo").classList.toggle("ativo", aba==="conteudo");
- renderizarResultados(temas);
+
+ // Ao alternar para título, mostrar todos os títulos
+ if(abaAtiva === "titulo"){
+   renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
+ } else if(abaAtiva === "conteudo"){
+   // Para conteúdo, mostrar histórico de pesquisa, se houver
+   renderizarResultados(pesquisaHistorico.length? pesquisaHistorico : []);
+ }
 }
 
+// ---------------- PESQUISA ----------------
 function pesquisar(){
  termoPesquisado = document.getElementById("pesquisaInput").value.trim();
- let filtrados = temas.filter(t=>{
-   if(abaAtiva==="titulo"){
-     return t.titulo && t.titulo.toLowerCase().includes(termoPesquisado.toLowerCase());
-   } else {
-     return t.conteudo && t.conteudo.toLowerCase().includes(termoPesquisado.toLowerCase());
+ if(!termoPesquisado) return;
+
+ let filtrados = [];
+ temas.forEach(t=>{
+   if(abaAtiva==="titulo" && t.titulo.toLowerCase().includes(termoPesquisado.toLowerCase())){
+     filtrados.push({tema:t, paragrafo:null});
+   } else if(abaAtiva==="conteudo" && t.conteudo.toLowerCase().includes(termoPesquisado.toLowerCase())){
+     let parags = t.conteudo.split(/\n|\r\n/);
+     parags.forEach(p=>{
+       if(p.toLowerCase().includes(termoPesquisado.toLowerCase())){
+         filtrados.push({tema:t, paragrafo:p});
+       }
+     });
    }
  });
+ pesquisaHistorico = filtrados;
  renderizarResultados(filtrados);
 }
 
-function renderizarResultados(listaTemas){
+// ---------------- RENDERIZAR RESULTADOS ----------------
+function renderizarResultados(listaResultados){
  resultados.innerHTML="";
- listaTemas.forEach(t=>{
+ listaResultados.forEach((item,i)=>{
    const div = document.createElement("div");
    div.className="tema";
-   div.innerText=t.titulo;
-   div.onclick = ()=>abrirTema(t);
+   div.innerHTML = `<strong>${item.tema.titulo}</strong>` + (item.paragrafo? `<p>${item.paragrafo.replace(new RegExp(termoPesquisado,'gi'), match=>`<mark>${match}</mark>`)}</p>`:'');
+   div.onclick = ()=>abrirTema(item.tema, item.paragrafo, 'res'+i);
    resultados.appendChild(div);
  });
 }
 
-// ---------------- PLANIFICAÇÃO ----------------
-function pesquisarPlanificacao(){
- const termo = document.getElementById("planTema").value.trim().toLowerCase();
- planResultados.innerHTML="";
- if(!termo) return;
- let encontrados = temas.filter(t=>t.conteudo.toLowerCase().includes(termo));
- encontrados.forEach(t=>{
-   const div = document.createElement("div");
-   div.className="tema";
-   div.innerHTML = `<strong>${t.titulo}</strong><p>${t.conteudo.substring(0,150)}...</p>`;
-   div.onclick = ()=>abrirTema(t);
-   planResultados.appendChild(div);
- });
-}
-
-// ---------------- ABRIR TEMA COM DESTAQUES ----------------
-function abrirTema(t){
+// ---------------- ABRIR TEMA ----------------
+function abrirTema(t, paragrafo=null, trechoId=null){
  temaAtualId = t.id;
+ scrollId = trechoId;
  document.getElementById("lTitulo").innerText = t.titulo || "";
- document.getElementById("lLocal").innerText = t.local || "";
- document.getElementById("lData").innerText = t.data || "";
- document.getElementById("lTraducao").innerText = t.traducao || "";
+ lLocal.innerText = t.local || "";
+ lData.innerText = t.data || "";
+ lTraducao.innerText = t.traducao || "";
 
  let conteudo = t.conteudo || "";
- if(t.destaques){
-   t.destaques.forEach(d=>{
-     const regex = new RegExp(d.texto,"gi");
-     conteudo = conteudo.replace(regex, `<span style="background-color:${d.cor}">${d.texto}</span>`);
+ let destaques = t.destaques || [];
+
+ let paragrafos = conteudo.split(/\n|\r\n/).map((p,index)=>{
+   let texto = p;
+   destaques.forEach(d=>{
+     const regex = new RegExp(d.texto,'gi');
+     texto = texto.replace(regex, `<span style="background-color:${d.cor}">${d.texto}</span>`);
    });
- }
- if(termoPesquisado){
-   const regex = new RegExp(termoPesquisado, "gi");
-   conteudo = conteudo.replace(regex, match => `<mark>${match}</mark>`);
- }
- lConteudo.innerHTML = conteudo;
+   if(termoPesquisado){
+     const regex = new RegExp(termoPesquisado,'gi');
+     texto = texto.replace(regex, m=>`<mark>${m}</mark>`);
+   }
+   if(paragrafo && p===paragrafo && trechoId){
+     return `<p id="${trechoId}">${texto}</p>`;
+   }
+   return `<p>${texto}</p>`;
+ });
+ lConteudo.innerHTML = paragrafos.join("");
 
  lista.style.display="none";
  leitura.style.display="block";
- planDiv.style.display="none";
- loginDiv.style.display="none";
- cadDiv.style.display="none";
  btnVoltar.style.display="block";
  menuBtn.style.display="none";
  menu.style.display="none";
- tituloHeader.innerText = t.titulo;
+
+ if(scrollId){
+   const elem = document.getElementById(scrollId);
+   if(elem) elem.scrollIntoView({behavior:'smooth', block:'center'});
+ }
 }
 
 // ---------------- VOLTAR ----------------
-function voltar(){ mostrarLista(); }
+function voltar(){ 
+ mostrarLista();
+}
+
+// ---------------- DESTAQUE MANUAL ----------------
+lConteudo.addEventListener("mouseup",(e)=>{
+ const selectedText = window.getSelection().toString().trim();
+ if(selectedText.length===0) return;
+
+ corMenu.style.top = (e.clientY+window.scrollY+5)+"px";
+ corMenu.style.left = (e.clientX+window.scrollX+5)+"px";
+ corMenu.style.display="flex";
+});
+
+function adicionarDestaque(cor){
+ const selection = window.getSelection();
+ if(selection.rangeCount===0) return;
+ const range = selection.getRangeAt(0);
+ const span = document.createElement("span");
+ span.style.backgroundColor = cor;
+ span.textContent = range.toString();
+ range.deleteContents();
+ range.insertNode(span);
+ selection.removeAllRanges();
+ corMenu.style.display="none";
+
+ // Salva no Firestore
+ db.collection("temas").doc(temaAtualId).update({
+   destaques: firebase.firestore.FieldValue.arrayUnion({
+     texto: span.textContent,
+     cor: cor
+   })
+ });
+}
 
 // ---------------- CARREGAR TEMAS ----------------
 db.collection("temas").orderBy("criadoEm","desc")
@@ -505,67 +424,11 @@ db.collection("temas").orderBy("criadoEm","desc")
    data.id = doc.id;
    temas.push(data);
  });
- renderizarResultados(temas);
-});
-
-// ---------------- DESTAQUE PERSISTENTE ----------------
-lConteudo.addEventListener("mouseup", (e)=>{
- const selectedText = window.getSelection().toString().trim();
- if(selectedText.length===0 || !temaAtualId) return;
-
- let btns = document.getElementById("btnDestaqueContainer");
- if(btns) btns.remove();
-
- const container = document.createElement("div");
- container.id="btnDestaqueContainer";
- container.style.position="absolute";
- container.style.top=(e.clientY+window.scrollY+5)+"px";
- container.style.left=(e.clientX+window.scrollX+5)+"px";
- container.style.zIndex=999;
- container.style.background="#fff";
- container.style.padding="5px";
- container.style.border="1px solid #ccc";
- container.style.borderRadius="5px";
- container.style.display="flex";
- container.style.gap="5px";
-
- const cores = ["yellow","pink","lightgreen","cyan"];
- cores.forEach(cor=>{
-   const btn=document.createElement("div");
-   btn.style.width="20px";
-   btn.style.height="20px";
-   btn.style.background=cor;
-   btn.style.cursor="pointer";
-   btn.style.border="1px solid #999";
-   btn.style.borderRadius="3px";
-   btn.onclick=()=>{
-     const selection = window.getSelection();
-     if(selection.rangeCount===0) return;
-     const range = selection.getRangeAt(0);
-     const span = document.createElement("span");
-     span.style.backgroundColor=cor;
-     span.textContent=range.toString();
-     range.deleteContents();
-     range.insertNode(span);
-     selection.removeAllRanges();
-     container.remove();
-
-     db.collection("temas").doc(temaAtualId).update({
-       destaques: firebase.firestore.FieldValue.arrayUnion({
-         texto: span.textContent,
-         cor: cor
-       })
-     });
-   };
-   container.appendChild(btn);
- });
- document.body.appendChild(container);
-});
-
-document.addEventListener("click",(e)=>{
- const container = document.getElementById("btnDestaqueContainer");
- if(container && !container.contains(e.target)) container.remove();
+ // Se estiver na aba título, mostrar todos os títulos ao carregar
+ if(abaAtiva==="titulo"){
+   renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
+ }
 });
 </script>
 </body>
-</html>
+ </html>
