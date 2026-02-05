@@ -4,38 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Palavra Falada</title>
- <link rel="manifest" href="manifest.json">
-<script src="/script.js"></script>
- <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1a237e">
- 
+
+<!-- Manifest PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2c3e50">
+
 <!-- Firebase -->
- script>
- script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-
-
- --bg :#f2f2f2;
- --card :#fff;
- --texto : #000;
- --cabeçalho : #2c3e50;
- --ativo :#2c3e50;
- --inativo :#fff;
+<!-- CSS -->
+<style>
+:root{
+ --bg:#f2f2f2;
+ --card:#fff;
+ --text:#000;
+ --header:#2c3e50;
+ --ativo:#2c3e50;
+ --inativo:#fff;
 }
-
- --bg :#121212;
- --card :#1e1e1e;
- --texto : #f5f5f5;
- --cabeçalho : #000;
+body.dark{
+ --bg:#121212;
+ --card:#1e1e1e;
+ --text:#f5f5f5;
+ --header:#000;
 }
-
- margem : 0 ;
- família-da-fonte : Arial , sem serifa ;
- 
- )
+body{
+ margin:0;
+ font-family:Arial, sans-serif;
+ background:var(--bg);
+ color:var(--text);
 }
-
-/* CABEÇALHO */
 header{
  background:var(--header);
  color:#fff;
@@ -49,154 +48,30 @@ header{
  right:0;
  z-index:100;
 }
-#tituloHeader{
- flex:1;
- text-align:center;
- font-weight:bold;
-}
-#menuBtn,#btnVoltar{
- font-size:30px;
- cursor:pointer;
- width:50px;
- text-align:center;
-}
-#btnVoltar{display:none}
-
-/* MENU */
-#menu{
- position:absolute;
- top:56px;
- left:0;
- width:200px;
- background:var(--card);
- display:none;
- flex-direction:column;
- padding:15px;
- box-shadow:2px 0 8px rgba(0,0,0,.2);
- z-index:99;
-}
-#menu button{
- width:100%;
- padding:12px;
- margin-bottom:10px;
- font-size:16px;
- cursor:pointer;
- border:none;
- border-radius:4px;
- background:#2c3e50;
- color:#fff;
-}
-
-/* LISTA */
-#lista{
- padding:70px 15px 15px 15px;
-}
-.tema{
- background:var(--card);
- padding:15px;
- margin-bottom:12px;
- border-radius:6px;
- cursor:pointer;
- font-weight:bold;
-}
-.tema:hover{ background:#eaeaea; }
-.tema p{ margin:4px 0; font-weight:normal; }
-
-/* LEITURA */
-#leitura{
- display:none;
- padding:20px;
- background:var(--card);
- margin:70px 15px 15px 15px;
- border-radius:6px;
- position:relative;
-}
-.meta{
- text-align:center;
- font-size:16px;
- margin:4px 0;
- font-style:italic;
-}
-#lConteudo{
- font-size:21px;
- margin-top:20px;
- line-height:1,6;
- text-align:left;
- white-space: pre-wrap;
- cursor:text;
-}
-
-/* ABAS DE PESQUISA */
-#lista .abas{
- display:flex;
- margin-bottom:8px;
- gap:5px;
-}
-#lista .abas button{
- flex:1;
- padding:10px;
- font-size:14px;
- cursor:pointer;
- border-radius:4px;
- border:1px solid #ccc;
- background:var(--inativo);
-}
-#lista .abas button.ativo{
- background:var(--ativo);
- color:#fff;
-}
-
-/* Destacar pesquisa */
-mark{
- background:yellow;
- font-weight:bold;
-}
-
-/* BARRA DE PESQUISA */
-#barraPesquisa{
- display:flex;
- margin-bottom:15px;
-}
-#pesquisaInput{
- flex:1;
- padding:14px;
- font-size:16px;
- border-radius:6px 0 0 6px;
- border:1px solid #ccc;
-}
-#pesquisaBtn{
- width:50px;
- min-width:50px;
- padding:14px;
- font-size:16px;
- border-radius:0 6px 6px 0;
- border:1px solid #ccc;
- background:#2c3e50;
- color:#fff;
- cursor:pointer;
-}
-
-/* MENU DE CORES */
-#corMenu{
- position:absolute;
- z-index:999;
- display:flex;
- gap:5px;
- background:#fff;
- padding:5px;
- border:1px solid #ccc;
- border-radius:5px;
-}
-#corMenu div{
- width:20px;
- height:20px;
- cursor:pointer;
- border:1px solid #999;
- border-radius:3px;
-}
+#tituloHeader{flex:1;text-align:center;font-weight:bold;}
+#menuBtn,#btnVoltar{font-size:30px;cursor:pointer;width:50px;text-align:center;}
+#btnVoltar{display:none;}
+#menu{position:absolute;top:56px;left:0;width:200px;background:var(--card);display:none;flex-direction:column;padding:15px;box-shadow:2px 0 8px rgba(0,0,0,.2);z-index:99;}
+#menu button{width:100%;padding:12px;margin-bottom:10px;font-size:16px;cursor:pointer;border:none;border-radius:4px;background:#2c3e50;color:#fff;}
+#lista{padding:70px 15px 15px 15px;}
+.tema{background:var(--card);padding:15px;margin-bottom:12px;border-radius:6px;cursor:pointer;font-weight:bold;}
+.tema:hover{background:#eaeaea;}
+.tema p{margin:4px 0;font-weight:normal;}
+#leitura{display:none;padding:20px;background:var(--card);margin:70px 15px 15px 15px;border-radius:6px;position:relative;}
+.meta{text-align:center;font-size:16px;margin:4px 0;font-style:italic;}
+#lConteudo{font-size:21px;margin-top:20px;line-height:1.6;text-align:left;white-space: pre-wrap;cursor:text;}
+#lista .abas{display:flex;margin-bottom:8px;gap:5px;}
+#lista .abas button{flex:1;padding:10px;font-size:14px;cursor:pointer;border-radius:4px;border:1px solid #ccc;background:var(--inativo);}
+#lista .abas button.ativo{background:var(--ativo);color:#fff;}
+mark{background:yellow;font-weight:bold;}
+#barraPesquisa{display:flex;margin-bottom:15px;}
+#pesquisaInput{flex:1;padding:14px;font-size:16px;border-radius:6px 0 0 6px;border:1px solid #ccc;}
+#pesquisaBtn{width:50px;min-width:50px;padding:14px;font-size:16px;border-radius:0 6px 6px 0;border:1px solid #ccc;background:#2c3e50;color:#fff;cursor:pointer;}
+#corMenu{position:absolute;z-index:999;display:flex;gap:5px;background:#fff;padding:5px;border:1px solid #ccc;border-radius:5px;}
+#corMenu div{width:20px;height:20px;cursor:pointer;border:1px solid #999;border-radius:3px;}
 </style>
-</head>
 
+</head>
 <body>
 
 <header>
@@ -205,13 +80,11 @@ mark{
  <div id="tituloHeader">A Palavra Falada</div>
 </header>
 
-<!-- MENU -->
 <div id="menu">
  <button onclick="alternarModo()">🌙 Modo escuro</button>
  <button onclick="window.open('https://wa.me/message/OB5A46SRD5QNN1','_blank')">💬 Suporte / Atendimento</button>
 </div>
 
-<!-- LISTA -->
 <div id="lista">
   <div class="abas">
     <button id="abaTitulo" class="ativo" onclick="ativarAba('titulo')">Pesquisar Título</button>
@@ -224,7 +97,6 @@ mark{
   <div id="resultados"></div>
 </div>
 
-<!-- LEITURA -->
 <div id="leitura">
  <h2 id="lTitulo" style="text-align:center"></h2>
  <div class="meta" id="lLocal"></div>
@@ -234,7 +106,6 @@ mark{
  <div id="lConteudo"></div>
 </div>
 
-<!-- MENU DE CORES -->
 <div id="corMenu" style="display:none">
  <div style="background:yellow" onclick="adicionarDestaque('yellow')"></div>
  <div style="background:cyan" onclick="adicionarDestaque('cyan')"></div>
@@ -242,14 +113,17 @@ mark{
  <div style="background:lightgreen" onclick="adicionarDestaque('lightgreen')"></div>
 </div>
 
+<!-- JS do Firebase + funcionalidades do site -->
 <script>
+// Inicializar Firebase
 firebase.initializeApp({
  apiKey: "AIzaSyCgO6wlKptEKpv-65nwZItGTXjLs0pl-cc",
  authDomain: "a-palavra-falada-abad0.firebaseapp.com",
  projectId: "a-palavra-falada-abad0"
 });
-
 const db = firebase.firestore();
+
+// Variáveis
 const lista = document.getElementById("lista");
 const leitura = document.getElementById("leitura");
 const btnVoltar = document.getElementById("btnVoltar");
@@ -270,7 +144,7 @@ let temaAtualId = "";
 let scrollId = null;
 let pesquisaHistorico = [];
 
-// ---------------- FUNÇÕES DE TELA ----------------
+// -------- FUNÇÕES DE TELA --------
 function mostrarLista(){
  lista.style.display="block";
  leitura.style.display="none";
@@ -282,7 +156,6 @@ function mostrarLista(){
  if(abaAtiva === "titulo") renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
 }
 
-// ---------------- MENU ----------------
 function abrirMenu(){
  lista.style.display="none";
  leitura.style.display="none";
@@ -291,58 +164,44 @@ function abrirMenu(){
  menuBtn.style.display="none";
  tituloHeader.innerText="Menu";
 }
+
 function alternarModo(){ document.body.classList.toggle("dark"); }
 
-// ---------------- ABAS ----------------
 function ativarAba(aba){
  abaAtiva = aba;
  document.getElementById("abaTitulo").classList.toggle("ativo", aba==="titulo");
  document.getElementById("abaConteudo").classList.toggle("ativo", aba==="conteudo");
-
- // Ao alternar para título, mostrar todos os títulos
- if(abaAtiva === "titulo"){
-   renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
- } else if(abaAtiva === "conteudo"){
-   // Para conteúdo, mostrar histórico de pesquisa, se houver
-   renderizarResultados(pesquisaHistorico.length? pesquisaHistorico : []);
- }
+ if(abaAtiva==="titulo"){ renderizarResultados(temas.map(t=>({tema:t, paragrafo:null}))); }
+ else if(abaAtiva==="conteudo"){ renderizarResultados(pesquisaHistorico.length? pesquisaHistorico:[]); }
 }
 
-// ---------------- PESQUISA ----------------
 function pesquisar(){
  termoPesquisado = document.getElementById("pesquisaInput").value.trim();
  if(!termoPesquisado) return;
-
- let filtrados = [];
+ let filtrados=[];
  temas.forEach(t=>{
    if(abaAtiva==="titulo" && t.titulo.toLowerCase().includes(termoPesquisado.toLowerCase())){
      filtrados.push({tema:t, paragrafo:null});
    } else if(abaAtiva==="conteudo" && t.conteudo.toLowerCase().includes(termoPesquisado.toLowerCase())){
      let parags = t.conteudo.split(/\n|\r\n/);
-     parags.forEach(p=>{
-       if(p.toLowerCase().includes(termoPesquisado.toLowerCase())){
-         filtrados.push({tema:t, paragrafo:p});
-       }
-     });
+     parags.forEach(p=>{ if(p.toLowerCase().includes(termoPesquisado.toLowerCase())) filtrados.push({tema:t, paragrafo:p}); });
    }
  });
  pesquisaHistorico = filtrados;
  renderizarResultados(filtrados);
 }
 
-// ---------------- RENDERIZAR RESULTADOS ----------------
 function renderizarResultados(listaResultados){
  resultados.innerHTML="";
  listaResultados.forEach((item,i)=>{
    const div = document.createElement("div");
    div.className="tema";
    div.innerHTML = `<strong>${item.tema.titulo}</strong>` + (item.paragrafo? `<p>${item.paragrafo.replace(new RegExp(termoPesquisado,'gi'), match=>`<mark>${match}</mark>`)}</p>`:'');
-   div.onclick = ()=>abrirTema(item.tema, item.paragrafo, 'res'+i);
+   div.onclick = ()=>abrirTema(item.tema, item.paragrafo,'res'+i);
    resultados.appendChild(div);
  });
 }
 
-// ---------------- ABRIR TEMA ----------------
 function abrirTema(t, paragrafo=null, trechoId=null){
  temaAtualId = t.id;
  scrollId = trechoId;
@@ -383,16 +242,11 @@ function abrirTema(t, paragrafo=null, trechoId=null){
  }
 }
 
-// ---------------- VOLTAR ----------------
-function voltar(){ 
- mostrarLista();
-}
+function voltar(){ mostrarLista(); }
 
-// ---------------- DESTAQUE MANUAL ----------------
 lConteudo.addEventListener("mouseup",(e)=>{
  const selectedText = window.getSelection().toString().trim();
  if(selectedText.length===0) return;
-
  corMenu.style.top = (e.clientY+window.scrollY+5)+"px";
  corMenu.style.left = (e.clientX+window.scrollX+5)+"px";
  corMenu.style.display="flex";
@@ -410,7 +264,6 @@ function adicionarDestaque(cor){
  selection.removeAllRanges();
  corMenu.style.display="none";
 
- // Salva no Firestore
  db.collection("temas").doc(temaAtualId).update({
    destaques: firebase.firestore.FieldValue.arrayUnion({
      texto: span.textContent,
@@ -419,21 +272,27 @@ function adicionarDestaque(cor){
  });
 }
 
-// ---------------- CARREGAR TEMAS ----------------
-db.collection("temas").orderBy("criadoEm","desc")
-.onSnapshot(snapshot=>{
- temas = [];
+db.collection("temas").orderBy("criadoEm","desc").onSnapshot(snapshot=>{
+ temas=[];
  snapshot.forEach(doc=>{
    let data = doc.data();
-   data.id = doc.id;
+   data.id=doc.id;
    temas.push(data);
  });
- // Se estiver na aba título, mostrar todos os títulos ao carregar
- if(abaAtiva==="titulo"){
-   renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
-  <script src="/script.js"></script>
- }
+ if(abaAtiva==="titulo") renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
 });
 </script>
+
+<!-- Script para PWA -->
+<script>
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/service-worker.js')
+    .then(()=>console.log('Service Worker registrado com sucesso'))
+    .catch(err=>console.log('Erro ao registrar SW:', err));
+  });
+}
+</script>
+
 </body>
  </html>
