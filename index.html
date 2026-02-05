@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Palavra Falada</title>
+
+<!-- Manifest PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2c3e50">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- CSS -->
+<style>
+:root{
+ --bg:#f2f2f2;
+ --card:#fff;
+ --text:#000;
+ --header:#2c3e50;
+ --ativo:#2c3e50;
+ --inativo:#fff;
+}
+body.dark{
+ --bg:#121212;
+ --card:#1e1e1e;
+ --text:#f5f5f5;
+ --header:#000;
+}
+body{
+ margin:0;
+ font-family:Arial, sans-serif;
+ background:var(--bg);
+ color:var(--text);
+}
+header{
+ background:var(--header);
+ color:#fff;
+ height:56px;
+ display:flex;
+ align-items:center;
+ padding:0 10px;
+ position:fixed;
+ top:0;
+ left:0;
+ right:0;
+ z-index:100;
+}
+#tituloHeader{flex:1;text-align:center;font-weight:bold;}
+#menuBtn,#btnVoltar{font-size:30px;cursor:pointer;width:50px;text-align:center;}
+#btnVoltar{display:none;}
+#menu{position:absolute;top:56px;left:0;width:200px;background:var(--card);display:none;flex-direction:column;padding:15px;box-shadow:2px 0 8px rgba(0,0,0,.2);z-index:99;}
+#menu button{width:100%;padding:12px;margin-bottom:10px;font-size:16px;cursor:pointer;border:none;border-radius:4px;background:#2c3e50;color:#fff;}
+#lista{padding:70px 15px 15px 15px;}
+.tema{background:var(--card);padding:15px;margin-bottom:12px;border-radius:6px;cursor:pointer;font-weight:bold;}
+.tema:hover{background:#eaeaea;}
+.tema p{margin:4px 0;font-weight:normal;}
+#leitura{display:none;padding:20px;background:var(--card);margin:70px 15px 15px 15px;border-radius:6px;position:relative;}
+.meta{text-align:center;font-size:16px;margin:4px 0;font-style:italic;}
+#lConteudo{font-size:21px;margin-top:20px;line-height:1.6;text-align:left;white-space: pre-wrap;cursor:text;}
+#lista .abas{display:flex;margin-bottom:8px;gap:5px;}
+#lista .abas button{flex:1;padding:10px;font-size:14px;cursor:pointer;border-radius:4px;border:1px solid #ccc;background:var(--inativo);}
+#lista .abas button.ativo{background:var(--ativo);color:#fff;}
+mark{background:yellow;font-weight:bold;}
+#barraPesquisa{display:flex;margin-bottom:15px;}
+#pesquisaInput{flex:1;padding:14px;font-size:16px;border-radius:6px 0 0 6px;border:1px solid #ccc;}
+#pesquisaBtn{width:50px;min-width:50px;padding:14px;font-size:16px;border-radius:0 6px 6px 0;border:1px solid #ccc;background:#2c3e50;color:#fff;cursor:pointer;}
+#corMenu{position:absolute;z-index:999;display:flex;gap:5px;background:#fff;padding:5px;border:1px solid #ccc;border-radius:5px;}
+#corMenu div{width:20px;height:20px;cursor:pointer;border:1px solid #999;border-radius:3px;}
+</style>
+
+</head>
+<body>
+
+<header>
+ <div id="btnVoltar" onclick="voltar()">⬅</div>
+ <div id="menuBtn" onclick="abrirMenu()">☰</div>
+ <div id="tituloHeader">A Palavra Falada</div>
+</header>
+
+<div id="menu">
+ <button onclick="alternarModo()">🌙 Modo escuro</button>
+ <button onclick="window.open('https://wa.me/message/OB5A46SRD5QNN1','_blank')">💬 Suporte / Atendimento</button>
+</div>
+
+<div id="lista">
+  <div class="abas">
+    <button id="abaTitulo" class="ativo" onclick="ativarAba('titulo')">Pesquisar Título</button>
+    <button id="abaConteudo" onclick="ativarAba('conteudo')">Pesquisar Conteúdo</button>
+  </div>
+  <div id="barraPesquisa">
+    <input id="pesquisaInput" placeholder="Digite para pesquisar...">
+    <button id="pesquisaBtn" onclick="pesquisar()">🔍</button>
+  </div>
+  <div id="resultados"></div>
+</div>
+
+<div id="leitura">
+ <h2 id="lTitulo" style="text-align:center"></h2>
+ <div class="meta" id="lLocal"></div>
+ <div class="meta" id="lData"></div>
+ <div class="meta" id="lTraducao"></div>
+ <hr>
+ <div id="lConteudo"></div>
+</div>
+
+<div id="corMenu" style="display:none">
+ <div style="background:yellow" onclick="adicionarDestaque('yellow')"></div>
+ <div style="background:cyan" onclick="adicionarDestaque('cyan')"></div>
+ <div style="background:pink" onclick="adicionarDestaque('pink')"></div>
+ <div style="background:lightgreen" onclick="adicionarDestaque('lightgreen')"></div>
+</div>
+
+<!-- JS do Firebase + funcionalidades do site -->
+<script>
+// Inicializar Firebase
+firebase.initializeApp({
+ apiKey: "AIzaSyCgO6wlKptEKpv-65nwZItGTXjLs0pl-cc",
+ authDomain: "a-palavra-falada-abad0.firebaseapp.com",
+ projectId: "a-palavra-falada-abad0"
+});
+const db = firebase.firestore();
+
+// Variáveis
+const lista = document.getElementById("lista");
+const leitura = document.getElementById("leitura");
+const btnVoltar = document.getElementById("btnVoltar");
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
+const tituloHeader = document.getElementById("tituloHeader");
+const resultados = document.getElementById("resultados");
+const lConteudo = document.getElementById("lConteudo");
+const lLocal = document.getElementById("lLocal");
+const lData = document.getElementById("lData");
+const lTraducao = document.getElementById("lTraducao");
+const corMenu = document.getElementById("corMenu");
+
+let temas = [];
+let abaAtiva = "titulo";
+let termoPesquisado = "";
+let temaAtualId = "";
+let scrollId = null;
+let pesquisaHistorico = [];
+
+// -------- FUNÇÕES DE TELA --------
+function mostrarLista(){
+ lista.style.display="block";
+ leitura.style.display="none";
+ btnVoltar.style.display="none";
+ menuBtn.style.display="block";
+ menu.style.display="none";
+ tituloHeader.innerText="A Palavra Falada";
+ scrollId = null;
+ if(abaAtiva === "titulo") renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
+}
+
+function abrirMenu(){
+ lista.style.display="none";
+ leitura.style.display="none";
+ menu.style.display="block";
+ btnVoltar.style.display="block";
+ menuBtn.style.display="none";
+ tituloHeader.innerText="Menu";
+}
+
+function alternarModo(){ document.body.classList.toggle("dark"); }
+
+function ativarAba(aba){
+ abaAtiva = aba;
+ document.getElementById("abaTitulo").classList.toggle("ativo", aba==="titulo");
+ document.getElementById("abaConteudo").classList.toggle("ativo", aba==="conteudo");
+ if(abaAtiva==="titulo"){ renderizarResultados(temas.map(t=>({tema:t, paragrafo:null}))); }
+ else if(abaAtiva==="conteudo"){ renderizarResultados(pesquisaHistorico.length? pesquisaHistorico:[]); }
+}
+
+function pesquisar(){
+ termoPesquisado = document.getElementById("pesquisaInput").value.trim();
+ if(!termoPesquisado) return;
+ let filtrados=[];
+ temas.forEach(t=>{
+   if(abaAtiva==="titulo" && t.titulo.toLowerCase().includes(termoPesquisado.toLowerCase())){
+     filtrados.push({tema:t, paragrafo:null});
+   } else if(abaAtiva==="conteudo" && t.conteudo.toLowerCase().includes(termoPesquisado.toLowerCase())){
+     let parags = t.conteudo.split(/\n|\r\n/);
+     parags.forEach(p=>{ if(p.toLowerCase().includes(termoPesquisado.toLowerCase())) filtrados.push({tema:t, paragrafo:p}); });
+   }
+ });
+ pesquisaHistorico = filtrados;
+ renderizarResultados(filtrados);
+}
+
+function renderizarResultados(listaResultados){
+ resultados.innerHTML="";
+ listaResultados.forEach((item,i)=>{
+   const div = document.createElement("div");
+   div.className="tema";
+   div.innerHTML = `<strong>${item.tema.titulo}</strong>` + (item.paragrafo? `<p>${item.paragrafo.replace(new RegExp(termoPesquisado,'gi'), match=>`<mark>${match}</mark>`)}</p>`:'');
+   div.onclick = ()=>abrirTema(item.tema, item.paragrafo,'res'+i);
+   resultados.appendChild(div);
+ });
+}
+
+function abrirTema(t, paragrafo=null, trechoId=null){
+ temaAtualId = t.id;
+ scrollId = trechoId;
+ document.getElementById("lTitulo").innerText = t.titulo || "";
+ lLocal.innerText = t.local || "";
+ lData.innerText = t.data || "";
+ lTraducao.innerText = t.traducao || "";
+
+ let conteudo = t.conteudo || "";
+ let destaques = t.destaques || [];
+
+ let paragrafos = conteudo.split(/\n|\r\n/).map((p,index)=>{
+   let texto = p;
+   destaques.forEach(d=>{
+     const regex = new RegExp(d.texto,'gi');
+     texto = texto.replace(regex, `<span style="background-color:${d.cor}">${d.texto}</span>`);
+   });
+   if(termoPesquisado){
+     const regex = new RegExp(termoPesquisado,'gi');
+     texto = texto.replace(regex, m=>`<mark>${m}</mark>`);
+   }
+   if(paragrafo && p===paragrafo && trechoId){
+     return `<p id="${trechoId}">${texto}</p>`;
+   }
+   return `<p>${texto}</p>`;
+ });
+ lConteudo.innerHTML = paragrafos.join("");
+
+ lista.style.display="none";
+ leitura.style.display="block";
+ btnVoltar.style.display="block";
+ menuBtn.style.display="none";
+ menu.style.display="none";
+
+ if(scrollId){
+   const elem = document.getElementById(scrollId);
+   if(elem) elem.scrollIntoView({behavior:'smooth', block:'center'});
+ }
+}
+
+function voltar(){ mostrarLista(); }
+
+lConteudo.addEventListener("mouseup",(e)=>{
+ const selectedText = window.getSelection().toString().trim();
+ if(selectedText.length===0) return;
+ corMenu.style.top = (e.clientY+window.scrollY+5)+"px";
+ corMenu.style.left = (e.clientX+window.scrollX+5)+"px";
+ corMenu.style.display="flex";
+});
+
+function adicionarDestaque(cor){
+ const selection = window.getSelection();
+ if(selection.rangeCount===0) return;
+ const range = selection.getRangeAt(0);
+ const span = document.createElement("span");
+ span.style.backgroundColor = cor;
+ span.textContent = range.toString();
+ range.deleteContents();
+ range.insertNode(span);
+ selection.removeAllRanges();
+ corMenu.style.display="none";
+
+ db.collection("temas").doc(temaAtualId).update({
+   destaques: firebase.firestore.FieldValue.arrayUnion({
+     texto: span.textContent,
+     cor: cor
+   })
+ });
+}
+
+db.collection("temas").orderBy("criadoEm","desc").onSnapshot(snapshot=>{
+ temas=[];
+ snapshot.forEach(doc=>{
+   let data = doc.data();
+   data.id=doc.id;
+   temas.push(data);
+ });
+ if(abaAtiva==="titulo") renderizarResultados(temas.map(t=>({tema:t, paragrafo:null})));
+});
+</script>
+
+<!-- Script para PWA -->
+<script>
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/service-worker.js')
+    .then(()=>console.log('Service Worker registrado com sucesso'))
+    .catch(err=>console.log('Erro ao registrar SW:', err));
+  });
+}
+</script>
+
+</body>
+</html>

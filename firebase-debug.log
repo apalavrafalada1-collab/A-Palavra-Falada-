@@ -1,0 +1,82 @@
+[debug] [2026-02-04T23:37:40.072Z] ----------------------------------------------------------------------
+[debug] [2026-02-04T23:37:40.155Z] Command:       /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/firebase login --no-localhost
+[debug] [2026-02-04T23:37:40.159Z] CLI Version:   15.5.1
+[debug] [2026-02-04T23:37:40.164Z] Platform:      android
+[debug] [2026-02-04T23:37:40.165Z] Node Version:  v25.3.0
+[debug] [2026-02-04T23:37:40.167Z] Time:          Thu Feb 05 2026 00:37:40 GMT+0100 (West Africa Time)
+[debug] [2026-02-04T23:37:40.169Z] ----------------------------------------------------------------------
+[debug] 
+[info] i  The Firebase CLI’s MCP server feature can optionally make use of Gemini in Firebase. Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[info] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you. 
+[debug] [2026-02-04T23:39:04.334Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-02-04T23:39:04.349Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"93ada365-e296-4e81-b8ef-12d33e3b1584"}
+[debug] [2026-02-04T23:39:08.550Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-02-04T23:39:08.552Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"k3cQr3IGneCy0HgYsMNC_0xNbPgMlE3AyDLci4e30nc"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    93ADA
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=seh5E2KcUhjkxOOFxtGviMtWua-1Cin3TK0IMVIi7zs&session=93ada365-e296-4e81-b8ef-12d33e3b1584&attest=k3cQr3IGneCy0HgYsMNC_0xNbPgMlE3AyDLci4e30nc
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
+[debug] [2026-02-04T23:46:37.651Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/data/data/com.termux/files/usr/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:508:28)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1327:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:284:20)
+    at ReadStream.emit (node:events:520:35)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-02-04T23:47:13.387Z] ----------------------------------------------------------------------
+[debug] [2026-02-04T23:47:13.472Z] Command:       /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/firebase login --no-localhost
+[debug] [2026-02-04T23:47:13.476Z] CLI Version:   15.5.1
+[debug] [2026-02-04T23:47:13.479Z] Platform:      android
+[debug] [2026-02-04T23:47:13.480Z] Node Version:  v25.3.0
+[debug] [2026-02-04T23:47:13.483Z] Time:          Thu Feb 05 2026 00:47:13 GMT+0100 (West Africa Time)
+[debug] [2026-02-04T23:47:13.484Z] ----------------------------------------------------------------------
+[debug] 
+[info] i  The Firebase CLI’s MCP server feature can optionally make use of Gemini in Firebase. Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[info] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you. 
+[debug] [2026-02-04T23:47:55.559Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-02-04T23:47:55.563Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"7cc2a11f-6a60-40ba-8ef6-31aaeae3bfdc"}
+[debug] [2026-02-04T23:47:56.778Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-02-04T23:47:56.781Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"t70DJmb1qfvNBHt54JDneubQQl9fqdyWP7FWiMSVJVs"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    7CC2A
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=HiEZtkCbtqxvaioDKQd_ZzFzhOov20BeoC7zWKKkKiA&session=7cc2a11f-6a60-40ba-8ef6-31aaeae3bfdc&attest=t70DJmb1qfvNBHt54JDneubQQl9fqdyWP7FWiMSVJVs
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
+[debug] [2026-02-04T23:59:17.661Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/data/data/com.termux/files/usr/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:508:28)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1327:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:284:20)
+    at ReadStream.emit (node:events:520:35)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+[error] 
+[error] Error: An unexpected error has occurred.
